@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asset Bundler Pro</title>
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23495464'><path d='M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z'/></svg>">
+    
     <!-- Load Tailwind CSS for modern styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -31,7 +34,7 @@
 
     <div class="max-w-6xl mx-auto">
         <header class="text-center mb-12 fade-in">
-            <h1 class="text-5xl font-extrabold mb-3 site-header">Asset Bundler Pro 📦</h1>
+            <h1 class="text-5xl font-extrabold mb-3 site-header">Asset Bundler Pro</h1>
             <p class="text-lg site-description">Download and manage images from multiple stock photo sites in one place.</p>
         </header>
 
