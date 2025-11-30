@@ -6,7 +6,7 @@
  * Handles downloading images from URLs and creating ZIP archives.
  * Used by the Asset Bundler Pro application to bundle images from multiple APIs.
  * 
- * @author Asset Bundler Pro Team
+ * @author Asset Bundler Pro
  * @version 1.0.0
  */
 class AssetBundler 

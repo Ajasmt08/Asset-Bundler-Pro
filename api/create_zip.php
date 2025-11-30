@@ -5,7 +5,7 @@
  * Creates a ZIP file from image URLs and saves it to the downloads folder.
  * Returns JSON with download URL when complete.
  * 
- * @author Asset Bundler Pro Team
+ * @author Asset Bundler Pro
  * @version 1.0.0
  */
 

@@ -5,7 +5,7 @@
  * Fetches images from multiple stock photo APIs (Pexels, Pixabay, Unsplash)
  * and returns them as JSON.
  * 
- * @author Asset Bundler Pro Team
+ * @author Asset Bundler Pro
  * @version 1.0.0
  */
 

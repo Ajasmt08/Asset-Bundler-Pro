@@ -5,7 +5,7 @@
  * Creates a ZIP file from image URLs and immediately sends it to the browser
  * for download.
  * 
- * @author Asset Bundler Pro Team
+ * @author Asset Bundler Pro
  * @version 1.0.0
  */
 
