@@ -30,15 +30,43 @@ body {
 .site-header {
     color: #495464;
     letter-spacing: -0.5px;
+    font-size: 2.4rem !important; /* 40px on mobile */
+    line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+    .site-header {
+        font-size: 3rem; /* 48px on medium screens */
+    }
+}
+
+@media (min-width: 1024px) {
+    .site-header {
+        font-size: 3.5rem; /* 56px on large screens */
+    }
 }
 
 .site-description {
     color: #495464;
     opacity: 0.8;
+    font-size: 1.125rem; /* 18px */
+}
+
+@media (min-width: 768px) {
+    .site-description {
+        font-size: 1.25rem; /* 20px on medium screens */
+    }
 }
 
 .section-header {
     color: #495464;
+    font-size: 1.875rem; /* 30px */
+}
+
+@media (min-width: 768px) {
+    .section-header {
+        font-size: 2.25rem; /* 36px on medium screens */
+    }
 }
 
 .input-label {

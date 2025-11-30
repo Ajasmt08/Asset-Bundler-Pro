@@ -46,7 +46,7 @@
                 <!-- Topic -->
                 <div>
                     <label for="topic" class="block text-sm font-semibold mb-2 input-label">Topic/Keyword</label>
-                    <input type="text" id="topic" value="shoes" placeholder="e.g., watch, organic food, laptops" class="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-2 text-base form-input">
+                    <input type="text" id="topic" value="" placeholder="e.g., watch, organic food, laptops" class="w-full p-3 border-2 rounded-xl focus:outline-none focus:ring-2 text-base form-input">
                     <p class="mt-2 text-xs font-medium input-hint">Will fetch 30 images from multiple sources</p>
                 </div>
             </div>
@@ -96,7 +96,7 @@
 
         <!-- PHP Scripts Placeholder (Informational only) -->
         <footer class="text-center text-xs mt-10 site-footer">
-            Images fetched from Pexels, Pixabay, and Unsplash APIs. Ensure PHP development server is running.
+            Images fetched from Pexels, Pixabay, and Unsplash APIs. Created for developers who need dummy images for demos and prototypes.
         </footer>
     </div>
 
