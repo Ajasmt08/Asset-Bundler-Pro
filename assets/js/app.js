@@ -205,6 +205,20 @@ function downloadAll() {
     const topic = document.getElementById('topic').value.trim();
     const imageUrls = fetchedImages.map(img => img.url);
 
+    // Hide the topic input area when download starts
+    const topicInput = document.getElementById('topic');
+    const topicLabel = topicInput.closest('div').previousElementSibling || topicInput.closest('div');
+    if (topicLabel && topicLabel.tagName === 'LABEL') {
+        topicLabel.classList.add('hidden');
+    }
+    topicInput.closest('div').classList.add('hidden');
+    
+    // Also hide the Get Images button
+    document.getElementById('fetch-button').closest('div').classList.add('hidden');
+    
+    // Hide the preview section
+    document.getElementById('preview-section').classList.add('hidden');
+
     downloadImages(imageUrls, `${topic}_all_${Date.now()}`);
 }
 
@@ -218,6 +232,20 @@ function downloadSelected() {
     }
 
     const topic = document.getElementById('topic').value.trim();
+
+    // Hide the topic input area when download starts
+    const topicInput = document.getElementById('topic');
+    const topicLabel = topicInput.closest('div').previousElementSibling || topicInput.closest('div');
+    if (topicLabel && topicLabel.tagName === 'LABEL') {
+        topicLabel.classList.add('hidden');
+    }
+    topicInput.closest('div').classList.add('hidden');
+    
+    // Also hide the Get Images button
+    document.getElementById('fetch-button').closest('div').classList.add('hidden');
+    
+    // Hide the preview section
+    document.getElementById('preview-section').classList.add('hidden');
 
     downloadImages(Array.from(selectedImages), `${topic}_selected_${Date.now()}`);
 }
@@ -338,6 +366,9 @@ function downloadImages(imageUrls, zipName) {
                             Click here to download
                         </a>
                         <p class="mt-3 text-xs" style="color: #BBBFCA;">File will be saved to your downloads folder</p>
+                        <button id="search-more-btn" class="mt-4 inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            Search More
+                        </button>
                     </div>
                 `;
                 
@@ -345,6 +376,15 @@ function downloadImages(imageUrls, zipName) {
                 if (downloadButton) downloadButton.disabled = false;
                 if (downloadSelectedBtn) downloadSelectedBtn.disabled = false;
                 if (fetchButton) fetchButton.disabled = false;
+                
+                // Add event listener for Search More button
+                const searchMoreBtn = document.getElementById('search-more-btn');
+                if (searchMoreBtn) {
+                    searchMoreBtn.addEventListener('click', function() {
+                        // Simply refresh the page
+                        location.reload();
+                    });
+                }
                 
                 showMessage('ZIP file created successfully! Click the download button to save it.', 'success');
             }, 500);
@@ -364,11 +404,29 @@ function downloadImages(imageUrls, zipName) {
         if (fetchButton) fetchButton.disabled = false;
         
         // Show error message
-        downloadControls.innerHTML = originalHTML;
+        downloadControls.innerHTML = `
+            <div class="w-full text-center p-4">
+                <div class="text-3xl mb-3 text-red-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+                <p class="mt-3 text-sm font-semibold" style="color: #495464;">Failed to create ZIP file</p>
+                <p class="mt-3 text-xs" style="color: #BBBFCA;">Please try again</p>
+                <button id="search-more-btn-error" class="mt-4 inline-flex items-center px-6 py-3 border border-gray-300 text-base font-medium rounded-md shadow-sm text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                    Search More
+                </button>
+            </div>
+        `;
         
-        // Re-attach event listeners
-        document.getElementById('download-button').addEventListener('click', downloadAll);
-        document.getElementById('download-selected-btn').addEventListener('click', downloadSelected);
+        // Add event listener for Search More button in error case
+        const searchMoreBtnError = document.getElementById('search-more-btn-error');
+        if (searchMoreBtnError) {
+            searchMoreBtnError.addEventListener('click', function() {
+                // Simply refresh the page
+                location.reload();
+            });
+        }
         
         showMessage('Failed to create ZIP file. Please try again.', 'error');
     });
