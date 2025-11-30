@@ -10,13 +10,26 @@ let selectedImages = new Set();
  */
 function setLoading(isLoading) {
   document.getElementById('fetch-button').disabled = isLoading;
-  document.getElementById('download-button').disabled = isLoading || fetchedImages.length === 0;
   document.getElementById('loading-indicator').classList.toggle('hidden', !isLoading);
 
   const fetchButton = document.getElementById('fetch-button');
-  fetchButton.innerHTML = isLoading
-    ? '<svg class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Loading...</span>'
-    : '<svg id="fetch-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span>Get Images</span>';
+  const progressFill = document.getElementById('progress-fill');
+
+  if (isLoading) {
+    fetchButton.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>Loading...</span>';
+    progressFill.style.width = '0%';
+  } else {
+    fetchButton.innerHTML = '<svg id="fetch-icon" class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg><span>Get Images</span>';
+
+    // Complete progress bar
+    if (window.progressInterval) {
+      clearInterval(window.progressInterval);
+    }
+    progressFill.style.width = '100%';
+    setTimeout(() => {
+      progressFill.style.width = '0%';
+    }, 500);
+  }
 }
 
 /**
@@ -27,14 +40,25 @@ function setLoading(isLoading) {
 function showMessage(message, type = 'info') {
   const box = document.getElementById('message-box');
   box.textContent = message;
-  box.classList.remove('hidden', 'bg-red-100', 'text-red-800', 'bg-green-100', 'text-green-800', 'bg-blue-100', 'text-blue-800');
+  box.classList.remove('hidden');
+
+  // Remove all color classes
+  box.style.backgroundColor = '';
+  box.style.color = '';
+  box.style.border = '';
 
   if (type === 'error') {
-    box.classList.add('bg-red-100', 'text-red-800');
+    box.style.backgroundColor = '#E8E8E8';
+    box.style.color = '#495464';
+    box.style.border = '2px solid #495464';
   } else if (type === 'success') {
-    box.classList.add('bg-green-100', 'text-green-800');
+    box.style.backgroundColor = '#F4F4F2';
+    box.style.color = '#495464';
+    box.style.border = '2px solid #BBBFCA';
   } else {
-    box.classList.add('bg-blue-100', 'text-blue-800');
+    box.style.backgroundColor = '#E8E8E8';
+    box.style.color = '#495464';
+    box.style.border = '2px solid #BBBFCA';
   }
 }
 
@@ -57,6 +81,24 @@ function clearPreview() {
   `;
 }
 
+/**
+ * Animates the progress bar during loading
+ */
+function animateProgress() {
+  const progressFill = document.getElementById('progress-fill');
+  let progress = 0;
+
+  const interval = setInterval(() => {
+    progress += Math.random() * 15;
+    if (progress > 90) progress = 90;
+
+    progressFill.style.width = progress + '%';
+  }, 200);
+
+  // Store interval ID to clear it later
+  window.progressInterval = interval;
+}
+
 // --- MAIN LOGIC ---
 
 /**
@@ -75,10 +117,13 @@ async function fetchImages() {
   fetchedImages = [];
   selectedImages.clear();
 
-  // Set loading state
-  clearPreview();
+  // Hide preview section and download controls
+  document.getElementById('preview-section').classList.add('hidden');
+  document.getElementById('download-controls').classList.add('hidden');
+
+  // Set loading state with progress animation
   setLoading(true);
-  showMessage(`Fetching ${limit} images for '${topic}' from all APIs...`, 'info');
+  animateProgress();
 
   try {
     const response = await fetch(`api/get_images.php?topic=${encodeURIComponent(topic)}&limit=${limit}`);
@@ -89,12 +134,25 @@ async function fetchImages() {
     }
 
     fetchedImages = data.images;
-    renderImages();
 
     setLoading(false);
     showMessage(`Successfully fetched ${data.count} images from multiple sources!`, 'success');
-    document.getElementById('download-button').disabled = false;
-    document.getElementById('selection-controls').classList.remove('hidden');
+
+    // Show preview section and download controls with animation
+    const previewSection = document.getElementById('preview-section');
+    const downloadControls = document.getElementById('download-controls');
+
+    previewSection.classList.remove('hidden');
+    previewSection.classList.add('fade-in');
+
+    downloadControls.classList.remove('hidden');
+    downloadControls.classList.add('slide-up');
+
+    // Attach event listeners to download buttons
+    document.getElementById('download-button').addEventListener('click', downloadAll);
+    document.getElementById('download-selected-btn').addEventListener('click', downloadSelected);
+
+    renderImages();
 
   } catch (error) {
     setLoading(false);
@@ -119,8 +177,7 @@ async function fetchImages() {
  */
 function renderImages() {
   const preview = document.getElementById('image-preview');
-  preview.classList.remove('flex', 'justify-center', 'items-center', 'bg-gray-200');
-  preview.classList.add('image-grid', 'p-4');
+  preview.classList.add('image-grid');
 
   preview.innerHTML = fetchedImages.map((img, index) => `
     <div class="image-item" data-index="${index}" data-url="${img.url}">
@@ -171,8 +228,10 @@ function toggleImageSelection(item, isSelected) {
 function updateSelectionControls() {
   const downloadSelectedBtn = document.getElementById('download-selected-btn');
   const selectAllBtn = document.getElementById('select-all-btn');
+  const selectionCount = document.getElementById('selection-count');
 
   downloadSelectedBtn.disabled = selectedImages.size === 0;
+  selectionCount.textContent = `${selectedImages.size} selected`;
 
   if (selectedImages.size === fetchedImages.length) {
     selectAllBtn.textContent = 'Deselect All';
@@ -227,7 +286,32 @@ function downloadSelected() {
  * Helper function to download images via POST request using form submission
  */
 function downloadImages(imageUrls, zipName) {
-  showMessage('Preparing ZIP file... This may take a moment.', 'info');
+  // Show downloading animation
+  const downloadControls = document.getElementById('download-controls');
+  const originalHTML = downloadControls.innerHTML;
+
+  downloadControls.innerHTML = `
+    <div class="w-full text-center p-4">
+      <div class="spinner"></div>
+      <p class="mt-3 text-sm" style="color: #495464;">Preparing ZIP file...</p>
+      <p class="mt-1 text-xs" style="color: #BBBFCA;">Downloading ${imageUrls.length} images</p>
+      <div class="progress-bar mt-2">
+        <div class="progress-fill" id="download-progress-fill" style="width: 0%"></div>
+      </div>
+    </div>
+  `;
+
+  // Animate download progress
+  let downloadProgress = 0;
+  const downloadInterval = setInterval(() => {
+    downloadProgress += Math.random() * 8; // Slower progress increment
+    if (downloadProgress > 90) downloadProgress = 90; // Stop at 90%
+
+    const progressFill = document.getElementById('download-progress-fill');
+    if (progressFill) {
+      progressFill.style.width = downloadProgress + '%';
+    }
+  }, 400); // Slower interval
 
   // Create a hidden form
   const form = document.createElement('form');
@@ -250,11 +334,27 @@ function downloadImages(imageUrls, zipName) {
   // Submit the form
   form.submit();
 
-  // Clean up
+  // Clean up and restore UI - increased timeout to 5 seconds
   setTimeout(() => {
-    document.body.removeChild(form);
-    showMessage('Download started! Check your downloads folder.', 'success');
-  }, 1000);
+    clearInterval(downloadInterval);
+
+    // Complete progress
+    const progressFill = document.getElementById('download-progress-fill');
+    if (progressFill) {
+      progressFill.style.width = '100%';
+    }
+
+    setTimeout(() => {
+      document.body.removeChild(form);
+      downloadControls.innerHTML = originalHTML;
+
+      // Re-attach event listeners
+      document.getElementById('download-button').addEventListener('click', downloadAll);
+      document.getElementById('download-selected-btn').addEventListener('click', downloadSelected);
+
+      showMessage('Download started! Check your downloads folder.', 'success');
+    }, 800);
+  }, 5000); // Increased from 2000ms to 5000ms
 }
 
 
@@ -263,21 +363,10 @@ document.addEventListener('DOMContentLoaded', () => {
   console.log("Asset Bundler Pro: App loaded");
 
   const fetchButton = document.getElementById('fetch-button');
-  const downloadButton = document.getElementById('download-button');
-  const downloadSelectedBtn = document.getElementById('download-selected-btn');
   const selectAllBtn = document.getElementById('select-all-btn');
 
   if (fetchButton) {
     fetchButton.addEventListener('click', fetchImages);
-  }
-
-  if (downloadButton) {
-    downloadButton.addEventListener('click', downloadAll);
-    downloadButton.disabled = true;
-  }
-
-  if (downloadSelectedBtn) {
-    downloadSelectedBtn.addEventListener('click', downloadSelected);
   }
 
   if (selectAllBtn) {

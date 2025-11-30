@@ -1,44 +1,141 @@
 /* Custom font */
 body {
     font-family: 'Inter', sans-serif;
-    background-color: #f7f9fb;
+    background-color: #F4F4F2;
 }
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.slide-up {
+    animation: slideUp 0.6s ease-out forwards;
+}
+
+/* Loading spinner */
+.spinner {
+    border: 3px solid #E8E8E8;
+    border-top: 3px solid #495464;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+/* Progress bar */
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #E8E8E8;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: #495464;
+    transition: width 0.3s ease;
+}
+
 /* Style for the image container */
 .image-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 16px;
 }
+
 .image-card {
     background-color: white;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s;
+    border: 2px solid #E8E8E8;
+    transition: all 0.3s ease;
 }
+
 .image-card:hover {
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(73, 84, 100, 0.2);
+    transform: translateY(-2px);
 }
+
 /* Image selection container */
 .image-item {
     position: relative;
     border-radius: 8px;
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
+    border: 2px solid #E8E8E8;
+    opacity: 0;
+    animation: fadeIn 0.5s ease-out forwards;
 }
+
+.image-item:nth-child(1) { animation-delay: 0.05s; }
+.image-item:nth-child(2) { animation-delay: 0.1s; }
+.image-item:nth-child(3) { animation-delay: 0.15s; }
+.image-item:nth-child(4) { animation-delay: 0.2s; }
+.image-item:nth-child(5) { animation-delay: 0.25s; }
+.image-item:nth-child(6) { animation-delay: 0.3s; }
+
 .image-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(187, 191, 202, 0.4);
 }
+
 .image-item.selected {
-    outline: 3px solid #3b82f6;
+    outline: 3px solid #495464;
     outline-offset: 2px;
 }
+
 .image-item img {
     width: 100%;
     height: 200px;
     object-fit: cover;
     display: block;
+    transition: transform 0.3s ease;
 }
+
+.image-item:hover img {
+    transform: scale(1.05);
+}
+
 .image-checkbox {
     position: absolute;
     top: 8px;
@@ -47,20 +144,43 @@ body {
     height: 24px;
     cursor: pointer;
     z-index: 10;
+    accent-color: #495464;
 }
+
 .image-overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.3);
+    background: rgba(73, 84, 100, 0.3);
     opacity: 0;
-    transition: opacity 0.2s;
+    transition: opacity 0.3s ease;
     pointer-events: none;
 }
+
 .image-item:hover .image-overlay {
     opacity: 1;
 }
+
 .image-item.selected .image-overlay {
     opacity: 1;
-    background: rgba(59, 130, 246, 0.2);
+    background: rgba(187, 191, 202, 0.3);
+}
+
+/* Button animations */
+button {
+    transition: all 0.3s ease;
+}
+
+button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(73, 84, 100, 0.3);
+}
+
+button:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+/* Hidden state */
+.hidden {
+    display: none !important;
 }
 
