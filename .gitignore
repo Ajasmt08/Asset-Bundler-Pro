@@ -1,0 +1,12 @@
+# Ignore generated downloads
+downloads/*.zip
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+
+# Ignore IDE files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
