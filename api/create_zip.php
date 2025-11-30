@@ -1,9 +1,9 @@
 <?php
 /**
- * Download API
+ * Create ZIP API
  * 
- * Creates a ZIP file from image URLs and immediately sends it to the browser
- * for download.
+ * Creates a ZIP file from image URLs and saves it to the downloads folder.
+ * Returns JSON with download URL when complete.
  * 
  * @author Asset Bundler Pro Team
  * @version 1.0.0
@@ -43,4 +43,21 @@ if (empty($imageUrls)) {
 }
 
 $bundler = new AssetBundler();
-$bundler->createAndDownloadZip($imageUrls, $zipName);
+$zipPath = $bundler->createAndSaveZip($imageUrls, $zipName);
+
+if ($zipPath) {
+    // Return success response with download URL
+    $downloadUrl = 'downloads/' . basename($zipPath);
+    echo json_encode([
+        'success' => true,
+        'downloadUrl' => $downloadUrl,
+        'filename' => basename($zipPath),
+        'message' => 'ZIP file created successfully!'
+    ]);
+} else {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Failed to create ZIP file.'
+    ]);
+}

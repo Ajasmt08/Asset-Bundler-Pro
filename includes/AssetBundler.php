@@ -5,16 +5,70 @@
  * 
  * Handles downloading images from URLs and creating ZIP archives.
  * Used by the Asset Bundler Pro application to bundle images from multiple APIs.
+ * 
+ * @author Asset Bundler Pro Team
+ * @version 1.0.0
  */
-class AssetBundler {
+class AssetBundler 
+{
     /**
      * Downloads images and creates a ZIP file.
      *
      * @param array $imageUrls Array of image URLs to download.
      * @param string $zipName The desired name of the ZIP file (without extension).
+     * @return string|null Path to the created ZIP file or null on failure
+     */
+    public function createAndSaveZip(array $imageUrls, string $zipName) 
+    {
+        if (empty($imageUrls)) {
+            return null;
+        }
+
+        // Ensure downloads directory exists
+        $downloadsDir = __DIR__ . '/../downloads';
+        if (!is_dir($downloadsDir)) {
+            mkdir($downloadsDir, 0755, true);
+        }
+
+        $zipPath = $downloadsDir . '/' . $zipName . '.zip';
+        $zip = new ZipArchive();
+        
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== TRUE) {
+            return null;
+        }
+
+        foreach ($imageUrls as $index => $url) {
+            $imageData = $this->fetchUrl($url);
+            if ($imageData !== false) {
+                // Extract extension from URL or content type
+                $ext = $this->getImageExtension($url, $imageData);
+                $filename = "{$zipName}_" . ($index + 1) . ".{$ext}";
+                $zip->addFromString($filename, $imageData);
+            }
+        }
+
+        $zip->close();
+
+        if (file_exists($zipPath) && filesize($zipPath) > 0) {
+            return $zipPath;
+        } else {
+            // Clean up empty file
+            if (file_exists($zipPath)) {
+                unlink($zipPath);
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Downloads images and creates a ZIP file for immediate download.
+     *
+     * @param array $imageUrls Array of image URLs to download.
+     * @param string $zipName The desired name of the ZIP file (without extension).
      * @return void
      */
-    public function createAndDownloadZip(array $imageUrls, string $zipName) {
+    public function createAndDownloadZip(array $imageUrls, string $zipName) 
+    {
         if (empty($imageUrls)) {
             die("No images to bundle.");
         }
@@ -52,7 +106,8 @@ class AssetBundler {
      * @param array $headers Optional headers
      * @return string|false
      */
-    public function fetchUrl(string $url, array $headers = []) {
+    public function fetchUrl(string $url, array $headers = []) 
+    {
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // For dev environments
@@ -81,7 +136,8 @@ class AssetBundler {
      * @param string $imageData The raw image data
      * @return string The file extension (jpg, png, gif, webp, etc.)
      */
-    private function getImageExtension(string $url, string $imageData): string {
+    private function getImageExtension(string $url, string $imageData): string 
+    {
         // Try to get extension from URL
         $parsedUrl = parse_url($url);
         if (isset($parsedUrl['path'])) {
@@ -119,7 +175,8 @@ class AssetBundler {
      * @param string $downloadName
      * @return void
      */
-    private function sendZipToBrowser(string $filePath, string $downloadName) {
+    private function sendZipToBrowser(string $filePath, string $downloadName) 
+    {
         header('Content-Type: application/zip');
         header("Content-Disposition: attachment; filename=\"{$downloadName}\"");
         header('Content-Length: ' . filesize($filePath));
